@@ -6,7 +6,7 @@
 <link rel="shortcut icon" href="uzu.ico">
 <title>People</title>
 <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
 <script>
   // Your web app's Firebase configuration
   var config = {
@@ -26,10 +26,11 @@ try {
     console.log(e);
 }
 var db = firebase.firestore();
-db.collection("people").get().then((querySnapshot) => {
+// db.collection("people").get().then((querySnapshot) => {
+db.collection("people").onSnapshot((querySnapshot) => {
     let result = '';
     querySnapshot.forEach((doc) => {
-        let person = data[i];
+        let person = doc.data();
         result += '<li>' + person.name + ' ['
             + person.mail + ':' + person.age + ']';
     });

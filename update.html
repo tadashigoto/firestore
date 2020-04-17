@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="shortcut icon" href="uzu.ico">
+<title>Update</title>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
+<script>
+var params = new URLSearchParams(window.location.search);
+// console.log('params:'+params);
+var id_value = params.get('id');
+// console.log('id_value:'+id_value);
+var nm = null;
+var ml = null;
+var ag = null;
+var msg = null;
+
+let config = {
+    apiKey: "AIzaSyA_GFe5vbgy5cxrbfZdoyOmQS6AKnWy1qE",
+    authDomain: "realtimestudy-86b4d.firebaseapp.com",
+    databaseURL: "https://realtimestudy-86b4d.firebaseio.com",
+    projectId: "realtimestudy-86b4d",
+    storageBucket: "realtimestudy-86b4d.appspot.com",
+    messagingSenderId: "627175746116",
+    appId: "1:627175746116:web:301a205b55039b4ac2ea11",
+    measurementId: "G-YVN66VG1RV"
+};
+
+try {
+    firebase.initializeApp(config);
+} catch(e) {
+    console.log(e);
+}
+var db = firebase.firestore();
+let col = db.collection("people");
+
+function onload(){
+    nm = document.querySelector('#name');
+    ml = document.querySelector('#mail');
+    ag = document.querySelector('#age');
+    msg = document.querySelector('#msg');
+    if (id_value != null){
+        col.doc(id_value).get().then((doc) => {
+            console.log('doc.data:'+doc.data);
+            let data = doc.data;
+            nm.value = data.name;
+            ml.value = data.mail;
+            ag.value = data.age;
+        });
+    }
+}
+col.onSnapshot((querySnapshot) => {
+    let result = '';
+    querySnapshot.forEach((doc) => {
+        let person = doc.data();
+        result += '<li>' + person.name + ' ['
+            + person.mail + ':' + person.age + ']';
+    });
+    document.querySelector('#list').innerHTML = result;
+});
+function doAction(){
+    col.doc(id_value).ser({
+        'name':nm.value,
+        'mail':ml.value,
+        'age':parseInt(ag.value)
+    })
+    .then(()=> {
+        nm.value = '';
+        ml.value = '';
+        ag.value = '';
+        document.querySelector('msg').textContext = "update data.";
+    })
+    .catch((error)=>{
+        console.error("Error writeing document: ",error);
+    });
+}
+</script>
+</head>
+<body onload="onload();">
+    <h1>Update</h1>
+    <h2 id="msg"></h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <td><input type="text" id="name"></td>
+        </tr>
+        <tr>
+            <th>Mail</th>
+            <td><input type="text" id="mail"></td>
+        </tr>
+        <tr>
+            <th>Age</th>
+            <td><input type="number" id="age"></td>
+        </tr>
+        <tr>
+            <th></th>
+            <td><button onclick="doAction();">Add</button></td>
+        </tr>
+    </table>
+    <hr>
+    <ol id="list"></ol>
+</body>
+</html>
