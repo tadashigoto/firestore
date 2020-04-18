@@ -63,11 +63,7 @@ col.onSnapshot((querySnapshot) => {
     document.querySelector('#list').innerHTML = result;
 });
 function doAction(){
-    col.doc(id_value).set({
-        'name':nm.value,
-        'mail':ml.value,
-        'age':parseInt(ag.value)
-    })
+    col.doc(id_value).delete()
     .then(()=> {
         nm.value = '';
         ml.value = '';
@@ -98,7 +94,7 @@ function doAction(){
         </tr>
         <tr>
             <th></th>
-            <td><button onclick="doAction();">click</button></td>
+            <td><button onclick="doAction();">delete</button></td>
         </tr>
     </table>
     <hr>
