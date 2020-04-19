@@ -1,0 +1,76 @@
+<!-- 範囲で検索 -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="shortcut icon" href="uzu.ico">
+<title>Create</title>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-firestore.js"></script>
+<script>
+// Initialize Firebase
+let config = {
+    apiKey: "AIzaSyA_GFe5vbgy5cxrbfZdoyOmQS6AKnWy1qE",
+    authDomain: "realtimestudy-86b4d.firebaseapp.com",
+    databaseURL: "https://realtimestudy-86b4d.firebaseio.com",
+    projectId: "realtimestudy-86b4d",
+    storageBucket: "realtimestudy-86b4d.appspot.com",
+    messagingSenderId: "627175746116",
+    appId: "1:627175746116:web:301a205b55039b4ac2ea11",
+    measurementId: "G-YVN66VG1RV"
+};
+
+try {
+    firebase.initializeApp(config);
+} catch(e) {
+    console.log(e);
+}
+var db = firebase.firestore();
+let coll = db.collection("people");
+
+var find = null;
+var msg = null;
+var list = null;
+
+function doLoad(){
+    find = document.querySelector('#find');
+    msg = document.querySelector('#msg');
+    list = document.querySelector('#list');
+}
+function doAction(){
+    let num = find.value * 1;
+    coll.where('age', '>=', num - 5)
+    .where('age', '<=', num + 5)
+    .orderBy('age','desc')
+    .get()
+    .then((snapShot)=>{
+        let res = '';
+        snapShot.forEach((doc) => {
+            let person = doc.data();
+            res += '<li>' + person.name + ' ['
+                + person.mail + ':' + person.age + ']';
+        });
+        list.innerHTML = res;
+        msg.texContent = 'find data: "' + find.value + '"';
+    })
+    .catch(function(error){
+        console.error("Error writing document: ", error);
+    });
+}
+</script>
+</head>
+<body onload="doLoad();">
+    <h1>Search</h1>
+    <h2 id="msg"></ht>
+    <table>
+        <tr>
+            <th>Name</th>
+            <td><input type="text" id="find"></td>
+            <td><button onclick="doAction();">find</button></td>
+        </tr>
+    </table>
+    <hr>
+    <ol id="list"></ol>
+</body>
+</html>
